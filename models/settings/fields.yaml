@@ -1,0 +1,11 @@
+tabs:
+  fields:
+    cms_pages:
+      label: Include RainLab Posts in Sitemap?
+      comment: If checked, CMS - Pages will be included in sitemap.
+      type: switch
+      span: left
+      tab: Configuration
+
+
+
