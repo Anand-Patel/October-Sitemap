@@ -15,6 +15,41 @@ use System\Classes\PluginManager;
 class Plugin extends PluginBase
 {
 
+    public $frequencyTypes;
+    public $priorityValues;
+    public $frequencyComment;
+    public $priorityComment;
+
+    public function __construct()
+    {
+        $this->frequencyTypes = [
+                                    'always' => 'Always',
+                                    'hourly' => 'Hourly',
+                                    'daily'  => 'Daily',
+                                    'weekly' => 'Weekly',
+                                    'monthly'=> 'Monthly',
+                                    'yearly' => 'Yearly',
+                                    'never'  => 'Never'
+        ];
+
+        $this->priorityValues = [
+                                    '0.0'   => '0.0',
+                                    '0.1'   => '0.1',
+                                    '0.2'   => '0.2',
+                                    '0.3'   => '0.3',
+                                    '0.4'   => '0.4',
+                                    '0.5'   => '0.5',
+                                    '0.6'   => '0.6',
+                                    '0.7'   => '0.7',
+                                    '0.8'   => '0.8',
+                                    '0.9'   => '0.9',
+                                    '1.0'   => '1.0',
+        ];
+
+        $this->frequencyComment = "Provides a hint about how frequently the page is likely to change.";
+        $this->priorityComment = "Describes the priority of a URL relative to all the other URLs on the site. ";
+
+    }
 
     public function registerSettings()
     {
@@ -49,6 +84,9 @@ class Plugin extends PluginBase
 
     public function boot()
     {
+
+        \App::register("Roumen\Sitemap\SitemapServiceProvider");
+
         Event::listen('backend.form.extendFields', function($form)
         {
             /*
@@ -82,22 +120,117 @@ class Plugin extends PluginBase
                 {
                     $form->addFields([
                         'blog_posts' => [
-                            'label'     => 'Include RainLab Blog - Posts in Sitemap?',
+                            'label'     => 'Include posts in sitemap?',
                             'type'      => 'switch',
                             'span'      => 'left',
                             'default'   => 'false',
-                            'tab'       => 'Configuration',
-                            'comment'   => 'If checked, RainLab Blog - Posts will be included in sitemap.'
+                            'tab'       => 'Rainlab Blog',
+//                            'comment'   => 'If checked, Posts will be included in sitemap.'
                         ],
                         'blog_categories' => [
-                            'label'     => 'Include RainLab Blog - Categories in Sitemap?',
+                            'label'     => 'Include categories in sitemap?',
+                            'type'      => 'switch',
+                            'span'      => 'right',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog',
+//                            'comment'   => 'If checked, Categories will be included in sitemap.'
+                        ],
+                        'blog_posts_lastmod' => [
+                            'label'     => 'Include Last modified for posts?',
                             'type'      => 'switch',
                             'span'      => 'left',
                             'default'   => 'false',
-                            'tab'       => 'Configuration',
-                            'comment'   => 'If checked, RainLab Blog - Categories will be included in sitemap.'
+                            'tab'       => 'Rainlab Blog'
                         ],
+                        'blog_categories_lastmod' => [
+                            'label'     => 'Include Last modified for categories?',
+                            'type'      => 'switch',
+                            'span'      => 'right',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog'
+                        ],
+                        'blog_posts_change_frequency' => [
+                            'label'     => 'Include change frequency for posts?',
+                            'type'      => 'switch',
+                            'span'      => 'left',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog'
+                        ],
+                        'blog_categories_change_frequency' => [
+                            'label'     => 'Include change frequency for categories?',
+                            'type'      => 'switch',
+                            'span'      => 'right',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog'
+                        ],
+                        'blog_posts_priority' => [
+                            'label'     => 'Include priority for posts?',
+                            'type'      => 'switch',
+                            'span'      => 'left',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog'
+                        ],
+                        'blog_categories_priority' => [
+                            'label'     => 'Include priority for categories?',
+                            'type'      => 'switch',
+                            'span'      => 'right',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog'
+                        ],
+                        'blog_posts_pages' => [
+                            'label'     => 'Select Page on which Post going to display',
+                            'type'      => 'dropdown',
+                            'span'      => 'left',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog'
+                        ],
+
+                        'blog_categories_pages' => [
+                            'label'     => 'Select Page on which Categories posts going to display',
+                            'type'      => 'dropdown',
+                            'span'      => 'right',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog',
+                        ],
+                        'blog_posts_frequency' => [
+                            'label'     => 'Select Frequency type for posts',
+                            'type'      => 'dropdown',
+                            'span'      => 'left',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog',
+                            'options'   => $this->frequencyTypes,
+//                            'comment'   => $this->frequencyComment
+                        ],
+                        'blog_categories_frequency' => [
+                            'label'     => 'Select Frequency type for categories',
+                            'type'      => 'dropdown',
+                            'span'      => 'right',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog',
+                            'options'   => $this->frequencyTypes,
+//                            'comment'   => $this->frequencyComment
+                        ],
+                        'blog_posts_priority_val' => [
+                            'label'     => 'Select Priority value for posts',
+                            'type'      => 'dropdown',
+                            'span'      => 'left',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog',
+                            'options'   => $this->priorityValues,
+//                            'comment'   => $this->priorityComment
+                        ],
+                        'blog_categories_priority_val' => [
+                            'label'     => 'Select Priority value for categories',
+                            'type'      => 'dropdown',
+                            'span'      => 'right',
+                            'default'   => 'false',
+                            'tab'       => 'Rainlab Blog',
+                            'options'   => $this->priorityValues,
+//                            'comment'   => $this->priorityComment
+                        ],
+
                     ],'primary');
+
                 }
 
                 if(PluginManager::instance()->hasPlugin('Autumn.Pages'))
@@ -117,4 +250,5 @@ class Plugin extends PluginBase
 
         });
     }
+
 }

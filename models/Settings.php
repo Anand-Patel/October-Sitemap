@@ -8,7 +8,7 @@
 
 namespace AnandPatel\Sitemap\models;
 use Model;
-
+use AnandPatel\Sitemap\Classes\RainLabBlog;
 class Settings extends Model
 {
     public $implement = ['System.Behaviors.SettingsModel'];
@@ -20,4 +20,21 @@ class Settings extends Model
     public $settingsFields = 'fields.yaml';
 
     protected $cache = [];
+
+
+    public function getBlogPostsPagesOptions()
+    {
+        $obj = new RainLabBlog();
+        $pages = $obj->getBlogPostPages();
+
+        return $pages;
+    }
+
+    public function  getBlogCategoriesPagesOptions()
+    {
+        $obj = new RainLabBlog();
+        $pages = $obj->getBlogCategoryPages();
+
+        return $pages;
+    }
 } 

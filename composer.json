@@ -1,0 +1,5 @@
+{
+    "require": {
+        "roumen/sitemap": "dev-master"
+    }
+}
